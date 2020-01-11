@@ -150,7 +150,7 @@ function indexOf(array,value){
 module.exports.indexOf = indexOf;
 
 /**
- * contains: This function is just like the includes array method. It is build to 
+ * contains: This function is just like the includes array method. It is built to 
  *           return true if the array contains the value passed in. or false if it
  *           does not include the value. we used a terenary operator to check the
  *           condition that the value is in the array.
@@ -214,14 +214,14 @@ module.exports.each = each;
 module.exports.unique = unique;
 
 /**
- * filter: Designed to iterate through an array and apply a function on each element
- *         in the array. then return a new array of true values.
+ * filter: Designed to iterate through an array and apply a callback function on each element
+ *         in the array to determine if the valuse a true. then it return a new array of all the true values.
  * 
  * @param {array} array: an array of values to pass through a function
  * 
- * @param {function} func: the function to be applied to each value in the array
+ * @param {function} func: the function to be applied to each value in the array to test the truthiness
  * 
- * @return {array}: an array of true values
+ * @return {array}: a new array of all the true values
  * 
  * 
 */
@@ -229,8 +229,8 @@ module.exports.unique = unique;
  function filter(array,func){
     let filterArr = [];
      each(array,function(element,i,collection){
-        if(func(array[i],i,array) === true){
-            filterArr.push(array[i]);
+        if(func(element,i,collection) === true){
+            filterArr.push(element);
         }
      });
      
@@ -239,15 +239,15 @@ module.exports.unique = unique;
 module.exports.filter = filter;
 
 /**
- * reject: Designed to iterate through an array and apply a function on each element 
- *         in the array. reject will return a new array of false values. this function
- *         uses filter to implement the fuction. 
+ * reject: Designed to iterate through an array and apply a callback function on each element 
+ *         in the array to check for the false values. reject will then return a new array of 
+ *         false values. this function.
  * 
  * @param {array} array: an array of values to test
  * 
- * @param {function} func: a function to be applied on the array
+ * @param {function} func: a function to test which values are false
  * 
- * @return {array}: an array of false values
+ * @return {array}: a new array of all the false values 
  *         
  * 
 */
@@ -292,14 +292,14 @@ module.exports.partition = partition;
 
 /**
  * map: This function is designed to iterate over an array or object and apply a
- *      callback function on each element in that array or object an return the values in an array.
+ *      callback function on each element in that array or object an return the modified values in an array.
  * 
  * @param {array or object} collection: the collection that will be iterated over 
  *                          then tested
  * 
- * @param {function} func: The function that wil be applied on collection
+ * @param {function} func: The function that wil be applied on each element in the collection
  * 
- * @return {array}: an array of test values will be returned
+ * @return {array}: an array of modified values
  * 
 */
 
@@ -314,13 +314,13 @@ module.exports.map = map;
 
 /**
  * pluck: Designed to iterate over an array of objects and return an array containing
- *       the value of property for every element in array. while utilizing our map function.
+ *       the value of the property for every element in the array of objects.
  * 
  * @param {array} array: an array of objects
  * 
  * @param {string} prop: a key on the object in which we will access the value
  * 
- * @return {string}: the value stored on the key
+ * @return {array}: the property values stored in a new array
  * 
 */
 
@@ -332,7 +332,7 @@ module.exports.map = map;
 module.exports.pluck = pluck;
 
 /**
- * every: Designed to apply a function on every value in either an array or object. 
+ * every: Designed to apply a callback function on every value in either an array or object. 
  *        if the value is true for every element we will then return true. If just 
  *        one value in the collection is false then we will return false. If there is not a function 
  *        to apply then we will look for truthy or falsy elements.
@@ -425,22 +425,33 @@ module.exports.some = some;
 */
 
 function reduce (array,test,seed){
-    let startValue = seed === undefined ? 1 : seed;
-    for(let i = 0; i < array.length; i++)
-    startValue = test(startValue, array[i], i, array);
-    return startValue;
+    let i;
+        let previousResult;
+        if(seed !== undefined && seed !== null) {
+            // initalized i at the first index
+            i = 0;
+            previousResult = seed;
+        } else {
+            previousResult = array[0];
+            i = 1;
+        }
+         for(; i < array.length; i++) {  // loop over array
+             previousResult = test(previousResult, array[i], i);
+         }
+         return previousResult;
+
 };
 module.exports.reduce = reduce;
 
 /**
- * extend: Designed to copy properties of sub objects into one main object.
+ * extend: Designed to copy properties from any object into one main "target" object.
  *         an then return the main object with all the other object properties copied in.
  * 
- * @param {object} obj1: the object that will gain all the properties from other objects
+ * @param {object} obj1: the target object that will gain all the properties from other objects
  * 
  * @param {...object} obj2: the object whose properties will be copied
  * 
- * @return {object}: an object with all the properties copied in
+ * @return {object}: the target object with all the properties copied in
 */
 
 function extend(obj1, ...object2){
